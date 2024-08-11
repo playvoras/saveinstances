@@ -7,7 +7,7 @@ local escapes = {
     ['>'] = '&gt;',
     ['\''] = '&apos;'
 }
-local processed = {} -- Table to keep track of processed objects
+local processed = {}
 
 function seralize(word)
     for i, v in pairs(escapes) do
