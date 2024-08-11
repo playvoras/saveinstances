@@ -102,3 +102,5 @@ getgenv().saveinstance = function(name, settings)
     appendfile(name, current)
     print("Done! took " .. tick() - start .. "s")
 end
+
+saveinstance("places.rblx")
