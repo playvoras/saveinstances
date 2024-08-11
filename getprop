@@ -1,5 +1,5 @@
 start = tick()
-local data = game:HttpGet("https://anaminus.github.io/rbx/json/api/latest.json")
+local data = game:HttpGet("https://raw.githubusercontent.com/playvoras/saveinstances/main/dump.lua")
 local a = game:GetService("HttpService"):JSONDecode(data)
 newdata = {}
 local voltma = {}
