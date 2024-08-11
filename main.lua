@@ -71,7 +71,7 @@ getgenv().saveinstance = function(name, settings)
         if v == game:GetService("CoreGui") or v == game:GetService("CorePackages") or processed[v] then
             return
         end
-        processed[v] = true -- Mark object as processed
+        processed[v] = true 
 
         add("<Item class=\"" .. v.ClassName .. "\"><Properties>")
         if data[v.ClassName] ~= nil then
