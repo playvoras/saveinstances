@@ -51,6 +51,9 @@ getgenv().saveinstance = function(name, settings)
                 add("<Content name=\"" .. data[1] .. "\"><url>" .. obj[data[1]] .. "</url></Content>")
             elseif settings["noscripts"] == nil and (obj:IsA("LocalScript") or obj:IsA("ModuleScript")) then
                 add("<ProtectedString name=\"Source\"><![CDATA[" .. seralize(decompile(obj)) .. "]]></ProtectedString>")
+            elseif data[2] == "TerrainData" then
+                local encoded = crypt.base64.encode(gethiddenproperty(obj, data[1]))
+                add(string.format("<BinaryString name=\"%s\"><![CDATA[%s]]></BinaryString>", data[1], encoded))
             elseif basictypes[data[2]] == nil then
                 local s, _ = pcall(function()
                     add("<token name=\"" .. data[1] .. "\">" .. tostring(obj[data[1]].Value) .. "</token>")
