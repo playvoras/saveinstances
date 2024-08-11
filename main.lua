@@ -41,11 +41,6 @@ getgenv().saveinstance = function(name, settings)
         pcall(function()
             if data[2] == "Vector3" then
                 add("<Vector3 name=\"" .. data[1] .. "\"><X>" .. obj[data[1]].X .. "</X><Y>" .. obj[data[1]].Y .. "</Y><Z>" .. obj[data[1]].Z .. "</Z></Vector3>")
-            elseif data[2] == "BinaryString" then
-                local value = gethiddenproperty(obj, data[1])
-                local encoded_value = typeof(value) == "EnumItem" and value.Value or value
-                local encoded = crypt.base64.encode(encoded_value)
-                add(string.format("<BinaryString name=\"%s\">%s</BinaryString>", obj.ClassName, encoded))
             elseif data[2] == "TerrainData" then
                 local encoded = crypt.base64.encode(gethiddenproperty(obj, data[1]))
                 add(string.format("<BinaryString name=\"%s\"><![CDATA[%s]]></BinaryString>", data[1], encoded))
@@ -72,15 +67,6 @@ getgenv().saveinstance = function(name, settings)
         end)
     end
 
-    function serializeattributes(obj)
-        local attributes = obj:GetAttributes()
-        for attrname, attrvalue in pairs(attributes) do
-            local attrtype = typeof(attrvalue)
-            local attrvalue_str = seralize(tostring(attrvalue))
-            add(string.format("<Attribute name=\"%s\" type=\"%s\">%s</Attribute>", attrname, attrtype, attrvalue_str))
-        end
-    end
-
     function getobjects(v)
         if v == game:GetService("CoreGui") or v == game:GetService("CorePackages") or processed[v] then
             return
@@ -93,7 +79,6 @@ getgenv().saveinstance = function(name, settings)
                 for u, k in pairs(data[v.ClassName]) do
                     validatetype({u, k}, v)
                 end
-                serializeattributes(v)
             else
                 add("<string name=\"Name\">" .. v.Name .. "</string>")
                 if not settings["noscripts"] and (v:IsA("ModuleScript") or v:IsA("LocalScript")) then
