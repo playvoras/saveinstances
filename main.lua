@@ -7,6 +7,7 @@ local escapes = {
     ['>'] = '&gt;',
     ['\''] = '&apos;'
 }
+local processed = {} -- Table to keep track of processed objects
 
 function seralize(word)
     for i, v in pairs(escapes) do
@@ -64,9 +65,11 @@ getgenv().saveinstance = function(name, settings)
     end
 
     function getobjects(v)
-        if v == game:GetService("CoreGui") or v == game:GetService("CorePackages") then
+        if v == game:GetService("CoreGui") or v == game:GetService("CorePackages") or processed[v] then
             return
         end
+        processed[v] = true
+
         add("<Item class=\"" .. v.ClassName .. "\"><Properties>")
         if data[v.ClassName] ~= nil then
             if not settings["noproperties"] then
@@ -103,4 +106,4 @@ getgenv().saveinstance = function(name, settings)
     print("Done! took " .. tick() - start .. "s")
 end
 
-saveinstance("places.rbxlx", {noscripts = true}
+saveinstance("places.rbxlx", {noscripts = true})
