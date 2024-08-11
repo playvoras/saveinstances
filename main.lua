@@ -41,6 +41,9 @@ getgenv().saveinstance = function(name, settings)
         pcall(function()
             if data[2] == "Vector3" then
                 add("<Vector3 name=\"" .. data[1] .. "\"><X>" .. obj[data[1]].X .. "</X><Y>" .. obj[data[1]].Y .. "</Y><Z>" .. obj[data[1]].Z .. "</Z></Vector3>")
+            elseif data[2] == "TerrainData" then
+                local encoded = crypt.base64.encode(gethiddenproperty(obj, data[1]))
+                add(string.format("<BinaryString name=\"%s\"><![CDATA[%s]]></BinaryString>", data[1], encoded))
             elseif data[2] == "Color3" and data[1] ~= "ColorSequence" then
                 add("<Color3 name=\"" .. data[1] .. "\"><R>" .. obj[data[1]].r .. "</R><G>" .. obj[data[1]].g .. "</G><B>" .. obj[data[1]].b .. "</B></Color3>")
             elseif data[1] == "CFrame" then
