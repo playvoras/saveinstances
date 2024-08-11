@@ -103,4 +103,4 @@ getgenv().saveinstance = function(name, settings)
     print("Done! took " .. tick() - start .. "s")
 end
 
-saveinstance("places.rblx")
+saveinstance("places.rbxlx", {noscripts = true}
