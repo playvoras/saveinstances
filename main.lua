@@ -7,13 +7,22 @@ local escapes = {
     ['>'] = '&gt;',
     ['\''] = '&apos;'
 }
-local processed = {} -- Table to keep track of processed objects
+local processed = {}
+local total_objects = 0
+local processed_objects = 0
 
 function seralize(word)
     for i, v in pairs(escapes) do
         word = string.gsub(word, i, v)
     end
     return word
+end
+
+function countobjects(v)
+    total_objects = total_objects + 1
+    for _, k in pairs(v:GetChildren()) do
+        countobjects(k)
+    end
 end
 
 getgenv().saveinstance = function(name, settings)
@@ -68,7 +77,9 @@ getgenv().saveinstance = function(name, settings)
         if v == game:GetService("CoreGui") or v == game:GetService("CorePackages") or processed[v] then
             return
         end
-        processed[v] = true
+        processed[v] = true 
+        processed_objects = processed_objects + 1
+        print("Processing object " .. processed_objects .. " out of " .. total_objects)
 
         add("<Item class=\"" .. v.ClassName .. "\"><Properties>")
         if data[v.ClassName] ~= nil then
@@ -95,6 +106,9 @@ getgenv().saveinstance = function(name, settings)
             getobjects(k)
         end
         add("</Item>")
+    end
+    for i, v in pairs(game:GetChildren()) do
+        countobjects(v)
     end
 
     writefile(name, [[<roblox xmlns:xmime="http://www.w3.org/2005/05/xmlmime" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://www.roblox.com/roblox.xsd" version="4">]])
