@@ -58,6 +58,9 @@ getgenv().saveinstance = function(name,settings)
         end)
     end
     function getObjects(v)
+        if v == game:GetService("CoreGui") or v == game:GetService("CorePackages") then
+            return
+        end
         add("<Item class=\""..v.ClassName.."\"><Properties>")
         if data[v.ClassName] ~= nil then
             if not settings["noproperties"] then
