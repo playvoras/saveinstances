@@ -37,6 +37,36 @@ getgenv().saveinstance = function(name, settings)
         end
     end
 
+    function serializeattribute(key, value)
+        local valueType = typeof(value)
+        if valueType == "string" then
+            return string.format("<Attribute name=\"%s\" type=\"string\">%s</Attribute>", key, seralize(value))
+        elseif valueType == "number" then
+            return string.format("<Attribute name=\"%s\" type=\"number\">%s</Attribute>", key, tostring(value))
+        elseif valueType == "boolean" then
+            return string.format("<Attribute name=\"%s\" type=\"boolean\">%s</Attribute>", key, tostring(value))
+        elseif valueType == "Vector3" then
+            return string.format("<Attribute name=\"%s\" type=\"Vector3\"><X>%s</X><Y>%s</Y><Z>%s</Z></Attribute>", key, value.X, value.Y, value.Z)
+        elseif valueType == "Color3" then
+            return string.format("<Attribute name=\"%s\" type=\"Color3\"><R>%s</R><G>%s</G><B>%s</B></Attribute>", key, value.R, value.G, value.B)
+        elseif valueType == "Vector2" then
+            return string.format("<Attribute name=\"%s\" type=\"Vector2\"><X>%s</X><Y>%s</Y></Attribute>", key, value.X, value.Y)
+        elseif valueType == "UDim2" then
+            return string.format("<Attribute name=\"%s\" type=\"UDim2\"><XS>%s</XS><XO>%s</XO><YS>%s</YS><YO>%s</YO></Attribute>", key, value.X.Scale, value.X.Offset, value.Y.Scale, value.Y.Offset)
+        elseif valueType == "UDim" then
+            return string.format("<Attribute name=\"%s\" type=\"UDim\"><S>%s</S><O>%s</O></Attribute>", key, value.Scale, value.Offset)
+        elseif valueType == "Rect" then
+            return string.format("<Attribute name=\"%s\" type=\"Rect\"><XMin>%s</XMin><YMin>%s</YMin><XMax>%s</XMax><YMax>%s</YMax></Attribute>", key, value.Min.X, value.Min.Y, value.Max.X, value.Max.Y)
+        elseif valueType == "CFrame" then
+            local components = {value:GetComponents()}
+            return string.format("<Attribute name=\"%s\" type=\"CFrame\"><X>%s</X><Y>%s</Y><Z>%s</Z>", key, components[1], components[2], components[3]) ..
+            string.format("<R00>%s</R00><R01>%s</R01><R02>%s</R02><R10>%s</R10><R11>%s</R11><R12>%s</R12><R20>%s</R20><R21>%s</R21><R22>%s</R22></Attribute>", 
+                components[4], components[5], components[6], components[7], components[8], components[9], components[10], components[11], components[12])
+        else
+            return string.format("<Attribute name=\"%s\" type=\"%s\">%s</Attribute>", key, valueType, tostring(value))
+        end
+    end
+
     function validatetype(data, obj)
         pcall(function()
             if data[2] == "Vector3" then
@@ -112,12 +142,14 @@ getgenv().saveinstance = function(name, settings)
                 end
             end
         end
-        if v:IsA("UnionOperation") then
-            add("<Union name=\"" .. v.Name .. "\"/>")
-        elseif v:IsA("MeshPart") then
-            add("<Mesh name=\"" .. v.Name .. "\"/>")
-        end
         add("</Properties>")
+
+        add("<Attributes>")
+        for key, value in pairs(v:GetAttributes()) do
+            add(serializeattribute(key, value))
+        end
+        add("</Attributes>")
+
         for _, k in pairs(v:GetChildren()) do
             getobjects(k)
         end
