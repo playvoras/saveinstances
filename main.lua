@@ -1,4 +1,4 @@
-local data = loadstring(game:HttpGet("https://raw.githubusercontent.com/HTDBarsi/grin/main/getprop.lua"))()
+local data = loadstring(game:HttpGet("https://raw.githubusercontent.com/playvoras/saveinstances/main/getprop"))()
 local basictypes = {["float"] = true, ["int64"] = true, ["bool"] = true, ["string"] = true}
 local escapes = {
     ['"'] = '&quot;',
