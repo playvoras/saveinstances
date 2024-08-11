@@ -41,15 +41,39 @@ getgenv().saveinstance = function(name, settings)
         pcall(function()
             if data[2] == "Vector3" then
                 add("<Vector3 name=\"" .. data[1] .. "\"><X>" .. obj[data[1]].X .. "</X><Y>" .. obj[data[1]].Y .. "</Y><Z>" .. obj[data[1]].Z .. "</Z></Vector3>")
-            elseif data[2] == "TerrainData" then
-                local encoded = crypt.base64.encode(gethiddenproperty(obj, data[1]))
-                add(string.format("<BinaryString name=\"%s\"><![CDATA[%s]]></BinaryString>", data[1], encoded))
+            elseif data[2] == "Vector2" then
+                add("<Vector2 name=\"" .. data[1] .. "\"><X>" .. obj[data[1]].X .. "</X><Y>" .. obj[data[1]].Y .. "</Y></Vector2>")
             elseif data[2] == "Color3" and data[1] ~= "ColorSequence" then
-                add("<Color3 name=\"" .. data[1] .. "\"><R>" .. obj[data[1]].r .. "</R><G>" .. obj[data[1]].g .. "</G><B>" .. obj[data[1]].b .. "</B></Color3>")
+                add("<Color3 name=\"" .. data[1] .. "\"><R>" .. obj[data[1]].R .. "</R><G>" .. obj[data[1]].G .. "</G><B>" .. obj[data[1]].B .. "</B></Color3>")
             elseif data[1] == "CFrame" then
-                add("<CoordinateFrame name=\"" .. data[1] .. "\"><X>" .. obj.CFrame.X .. "</X><Y>" .. obj.CFrame.Y .. "</Y><Z>" .. obj.CFrame.Z .. "</Z><R00>1</R00><R01>0</R01><R02>0</R02><R10>0</R10><R11>1</R11><R12>0</R12><R20>0</R20><R21>0</R21><R22>1</R22></CoordinateFrame>")
+                add("<CoordinateFrame name=\"" .. data[1] .. "\"><X>" .. obj.CFrame.X .. "</X><Y>" .. obj.CFrame.Y .. "</Y><Z>" .. obj.CFrame.Z .. "</Z>")
+                local components = {obj.CFrame:GetComponents()}
+                for i = 4, 12 do
+                    add(string.format("<R%02d>%s</R%02d>", i - 4, components[i], i - 4))
+                end
+                add("</CoordinateFrame>")
             elseif data[2] == "UDim2" then
                 add("<UDim2 name=\"" .. data[1] .. "\"><XS>" .. obj[data[1]].X.Scale .. "</XS><XO>" .. obj[data[1]].X.Offset .. "</XO><YS>" .. obj[data[1]].Y.Scale .. "</YS><YO>" .. obj[data[1]].Y.Offset .. "</YO></UDim2>")
+            elseif data[2] == "UDim" then
+                add("<UDim name=\"" .. data[1] .. "\"><S>" .. obj[data[1]].Scale .. "</S><O>" .. obj[data[1]].Offset .. "</O></UDim>")
+            elseif data[2] == "Rect" then
+                add("<Rect name=\"" .. data[1] .. "\"><XMin>" .. obj[data[1]].Min.X .. "</XMin><YMin>" .. obj[data[1]].Min.Y .. "</YMin><XMax>" .. obj[data[1]].Max.X .. "</XMax><YMax>" .. obj[data[1]].Max.Y .. "</YMax></Rect>")
+            elseif data[2] == "EnumItem" then
+                add("<token name=\"" .. data[1] .. "\">" .. tostring(obj[data[1]].Name) .. "</token>")
+            elseif data[2] == "NumberRange" then
+                add("<NumberRange name=\"" .. data[1] .. "\"><Min>" .. obj[data[1]].Min .. "</Min><Max>" .. obj[data[1]].Max .. "</Max></NumberRange>")
+            elseif data[2] == "NumberSequence" then
+                add("<NumberSequence name=\"" .. data[1] .. "\">")
+                for _, keypoint in ipairs(obj[data[1]].Keypoints) do
+                    add("<Keypoint><Time>" .. keypoint.Time .. "</Time><Value>" .. keypoint.Value .. "</Value><Envelope>" .. keypoint.Envelope .. "</Envelope></Keypoint>")
+                end
+                add("</NumberSequence>")
+            elseif data[2] == "ColorSequence" then
+                add("<ColorSequence name=\"" .. data[1] .. "\">")
+                for _, keypoint in ipairs(obj[data[1]].Keypoints) do
+                    add("<Keypoint><Time>" .. keypoint.Time .. "</Time><Value><R>" .. keypoint.Value.R .. "</R><G>" .. keypoint.Value.G .. "</G><B>" .. keypoint.Value.B .. "</B></Value></Keypoint>")
+                end
+                add("</ColorSequence>")
             elseif data[2] == "Content" then
                 add("<Content name=\"" .. data[1] .. "\"><url>" .. obj[data[1]] .. "</url></Content>")
             elseif settings["noscripts"] == nil and (obj:IsA("LocalScript") or obj:IsA("ModuleScript")) then
@@ -71,7 +95,7 @@ getgenv().saveinstance = function(name, settings)
         if v == game:GetService("CoreGui") or v == game:GetService("CorePackages") or processed[v] then
             return
         end
-        processed[v] = true 
+        processed[v] = true
 
         add("<Item class=\"" .. v.ClassName .. "\"><Properties>")
         if data[v.ClassName] ~= nil then
