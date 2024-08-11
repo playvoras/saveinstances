@@ -58,12 +58,14 @@ getgenv().saveinstance = function(name, settings)
         elseif valueType == "Rect" then
             return string.format("<Attribute name=\"%s\" type=\"Rect\"><XMin>%s</XMin><YMin>%s</YMin><XMax>%s</XMax><YMax>%s</YMax></Attribute>", key, value.Min.X, value.Min.Y, value.Max.X, value.Max.Y)
         elseif valueType == "CFrame" then
-            local components = {value:GetComponents()}
-            return string.format("<Attribute name=\"%s\" type=\"CFrame\"><X>%s</X><Y>%s</Y><Z>%s</Z>", key, components[1], components[2], components[3]) ..
-            string.format("<R00>%s</R00><R01>%s</R01><R02>%s</R02><R10>%s</R10><R11>%s</R11><R12>%s</R12><R20>%s</R20><R21>%s</R21><R22>%s</R22></Attribute>", 
-                components[4], components[5], components[6], components[7], components[8], components[9], components[10], components[11], components[12])
-        else
-            return string.format("<Attribute name=\"%s\" type=\"%s\">%s</Attribute>", key, valueType, tostring(value))
+        local components = {value:GetComponents()}
+        return string.format("<Attribute name=\"%s\" type=\"CFrame\"><X>%s</X><Y>%s</Y><Z>%s</Z>" ..
+        "<R00>%s</R00><R01>%s</R01><R02>%s</R02><R10>%s</R10><R11>%s</R11><R12>%s</R12>" ..
+        "<R20>%s</R20><R21>%s</R21><R22>%s</R22></Attribute>", key, components[1], components[2], components[3],
+        components[4], components[5], components[6], components[7], components[8], components[9],
+        components[10], components[11], components[12])
+    else
+        return string.format("<Attribute name=\"%s\" type=\"%s\">%s</Attribute>", key, valueType, tostring(value))
         end
     end
 
